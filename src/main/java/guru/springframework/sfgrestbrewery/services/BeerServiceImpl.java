@@ -12,8 +12,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
-import java.util.UUID;
+import reactor.core.publisher.Mono;
 
 /**
  * Created by jt on 2019-04-20.
@@ -76,16 +75,13 @@ public class BeerServiceImpl implements BeerService {
 
     @Cacheable(cacheNames = "beerCache", key = "#beerId", condition = "#showInventoryOnHand == false ")
     @Override
-    public BeerDto getById(UUID beerId, Boolean showInventoryOnHand) {
-        if (showInventoryOnHand) {
-            return beerMapper.beerToBeerDtoWithInventory(
-                    beerRepository.findById(beerId).block()
-            );
-        } else {
-            return beerMapper.beerToBeerDto(
-                    beerRepository.findById(beerId).block()
-            );
+    public Mono<BeerDto> getById(Integer beerId, Boolean showInventoryOnHand) {
+        if(showInventoryOnHand){
+            return beerRepository.findById(beerId)
+                    .map(beerMapper::beerToBeerDtoWithInventory);
         }
+        return beerRepository.findById(beerId)
+                .map(beerMapper::beerToBeerDto);
     }
 
     @Override
@@ -94,7 +90,7 @@ public class BeerServiceImpl implements BeerService {
     }
 
     @Override
-    public BeerDto updateBeer(UUID beerId, BeerDto beerDto) {
+    public BeerDto updateBeer(Integer beerId, BeerDto beerDto) {
         Beer beer = beerRepository.findById(beerId).block();
 
         beer.setBeerName(beerDto.getBeerName());
@@ -112,7 +108,7 @@ public class BeerServiceImpl implements BeerService {
     }
 
     @Override
-    public void deleteBeerById(UUID beerId) {
-        beerRepository.deleteById(beerId);
+    public void deleteBeerById(Integer beerId) {
+        beerRepository.deleteById(beerId).subscribe(Void -> log.info("Deleted Beer with id {}", beerId));
     }
 }
