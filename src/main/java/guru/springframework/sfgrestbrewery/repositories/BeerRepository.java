@@ -2,7 +2,9 @@ package guru.springframework.sfgrestbrewery.repositories;
 
 
 import guru.springframework.sfgrestbrewery.domain.Beer;
+import org.springframework.data.repository.query.Param;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
+import reactor.core.publisher.Mono;
 
 
 public interface BeerRepository extends ReactiveCrudRepository<Beer, Integer> {
@@ -12,5 +14,5 @@ public interface BeerRepository extends ReactiveCrudRepository<Beer, Integer> {
 
     // Page<Beer> findAllByBeerNameAndBeerStyle(String beerName, BeerStyleEnum beerStyle, Pageable pageable);
 
-    Beer findByUpc(String upc);
+    Mono<Beer> findByUpc(@Param("upc") String upc);
 }
