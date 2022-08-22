@@ -5,15 +5,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
-import javax.persistence.*;
 import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.util.UUID;
+import java.time.LocalDateTime;
 
 /**
  * Created by jt on 2019-05-25.
@@ -22,30 +19,28 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity
-public class Beer {
+@Table(name = "beer")
+public class Beer{
 
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    @Type(type="org.hibernate.type.UUIDCharType")
-    @Column(length = 36, columnDefinition = "varchar", updatable = false, nullable = false)
-    private UUID id;
-
-    @Version
+    @Column(value = "ID")
+    private Integer id;
+    @Column(value = "version")
     private Long version;
-
+    @Column(value = "beer_name")
     private String beerName;
+    @Column(value = "beer_style")
     private BeerStyleEnum beerStyle;
+    @Column(value = "upc")
     private String upc;
-
+    @Column(value = "quantity_on_hand")
     private Integer quantityOnHand;
+    @Column(value = "price")
     private BigDecimal price;
+    @Column(value = "created_date")
+    private LocalDateTime createdDate;
+    @Column(value = "last_modified_date")
+    private LocalDateTime lastModifiedDate;
 
-    @CreationTimestamp
-    @Column(updatable = false)
-    private Timestamp createdDate;
 
-    @UpdateTimestamp
-    private Timestamp lastModifiedDate;
 }

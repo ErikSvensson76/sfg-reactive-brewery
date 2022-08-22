@@ -2,8 +2,9 @@ package guru.springframework.sfgrestbrewery.web.mappers;
 
 import org.springframework.stereotype.Component;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 
 /**
@@ -11,21 +12,22 @@ import java.time.ZoneOffset;
  */
 @Component
 public class DateMapper {
-    public OffsetDateTime asOffsetDateTime(Timestamp ts){
+    public OffsetDateTime asOffsetDateTime(LocalDateTime ts){
+
+        OffsetDateTime offsetDateTime = null;
         if (ts != null){
-            return OffsetDateTime.of(ts.toLocalDateTime().getYear(), ts.toLocalDateTime().getMonthValue(),
-                    ts.toLocalDateTime().getDayOfMonth(), ts.toLocalDateTime().getHour(), ts.toLocalDateTime().getMinute(),
-                    ts.toLocalDateTime().getSecond(), ts.toLocalDateTime().getNano(), ZoneOffset.UTC);
-        } else {
-            return null;
+            ZoneId zoneId = ZoneId.of("Europe/Berlin");
+            ZoneOffset zoneOffset = zoneId.getRules().getOffset(ts);
+            offsetDateTime = ts.atOffset(zoneOffset);
         }
+        return offsetDateTime;
     }
 
-    public Timestamp asTimestamp(OffsetDateTime offsetDateTime){
+    public LocalDateTime asTimestamp(OffsetDateTime offsetDateTime){
+        LocalDateTime localDateTime = null;
         if(offsetDateTime != null) {
-            return Timestamp.valueOf(offsetDateTime.atZoneSameInstant(ZoneOffset.UTC).toLocalDateTime());
-        } else {
-            return null;
+            localDateTime = offsetDateTime.toLocalDateTime();
         }
+        return localDateTime;
     }
 }

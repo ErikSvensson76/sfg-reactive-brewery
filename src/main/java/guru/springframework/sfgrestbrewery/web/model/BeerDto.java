@@ -9,7 +9,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Null;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.util.UUID;
 
 /**
  * Created by jt on 2019-04-20.
@@ -21,7 +20,7 @@ import java.util.UUID;
 public class BeerDto {
 
     @Null
-    private UUID id;
+    private Integer id;
 
     @NotBlank
     private String beerName;
